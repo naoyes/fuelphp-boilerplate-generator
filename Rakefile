@@ -2,7 +2,7 @@
 desc "FuelPHPで作るWEBアプリケーションのボイラープレート作成"
 task :default do
 
-  projectname = "sandbox"
+  projectname = "sandbox" # TODO 引数でもらうようにする
   sh "git clone --recursive git://github.com/fuel/fuel.git #{projectname}"
   cd projectname
 
@@ -29,22 +29,22 @@ task :default do
     sh "git submodule add #{mod[:url]} #{mod[:path]}"
   end
 
-  rm "fuel/app/config/config.php"
-  cp "fuel/core/config/config.php", "fuel/app/config/config.php"
+  conf_file = 'fuel/app/config/config.php'
+  rm conf_file
+  cp "fuel/core/config/config.php", conf_file
 
+  tz = "Asia/Tokyo"
+  buff_file = 'fuel/app/config/config.php.buff'
+  open(conf_file, 'r') do |f|
+    open(buff_file, 'w') do |o|
+      while line = f.gets
+        line.gsub!("\'default_timezone\'   => null,", "\'default_timezone\'   => \'#{tz}\',")
+        o.puts line
+      end
+    end
+  end
+  mv buff_file, conf_file
+
+  sh "git add ."
+  sh "git commit -m 'Initial commit'"
 end
-
-#$ rm CHANGELOG.md CONTRIBUTING.md README.md TESTING.md .gitmodules
-#$ sudo rm -R .git docs/
-#$ git init
-#$ git submodule add git://github.com/fuel/core.git fuel/core
-#$ git submodule add git://github.com/fuel/auth.git fuel/packages/auth
-#$ git submodule add git://github.com/fuel/email.git fuel/packages/email
-#$ git submodule add git://github.com/fuel/oil.git fuel/packages/oil
-#$ git submodule add git://github.com/fuel/orm.git fuel/packages/orm
-#$ git submodule add git://github.com/fuel/parser.git fuel/packages/parser
-#$ rm fuel/app/config/config.php
-#$ cp fuel/core/config/config.php fuel/app/config/config.php
-#// set line 104 of the config file to the correct timezone
-#$ git add .
-#$ git commit -m "Initial commit"
