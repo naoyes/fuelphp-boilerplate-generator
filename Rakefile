@@ -1,25 +1,37 @@
 # encoding: utf-8
 desc "FuelPHPで作るWEBアプリケーションのボイラープレート作成"
-task :generate_fuelphp_boilerplate do
+task :default do
+
   projectname = "sandbox"
   sh "git clone --recursive git://github.com/fuel/fuel.git #{projectname}"
   cd projectname
-  submodules = [ # .gitmodules から自動生成できるようにしたい
-    {path:'fuel/core', url:'git://github.com/fuel/core.git'},
-    {path:'fuel/packages/orm', url:'git://github.com/fuel/orm.git'},
-    {path:'fuel/packages/auth', url:'git://github.com/fuel/auth.git'},
-    {path:'fuel/packages/oil', url:'git://github.com/fuel/oil.git'},
-    {path:'fuel/packages/parser', url:'git://github.com/fuel/parser.git'},
-    {path:'fuel/packages/email', url:'git://github.com/fuel/email.git'},
-  ]
+
+  submodules = []
+  pair = {}
+  open('.gitmodules', 'r').each do |line|
+    if /path = (.*)$/.match(line) then
+      pair[:path] = $1
+    elsif /url = (.*)$/.match(line) then
+      pair[:url] = $1
+      submodules.push(pair)
+      pair = {}
+    end
+  end
+
   del_files = ["CHANGELOG.md", "CONTRIBUTING.md", "README.md", "TESTING.md", ".gitmodules"]
   rm del_files
+
   del_dirs = ['.git', 'docs/']
   sh "sudo rm -R #{del_dirs.join(' ')}"
+
   sh "git init"
   submodules.each do |mod|
     sh "git submodule add #{mod[:url]} #{mod[:path]}"
   end
+
+  rm "fuel/app/config/config.php"
+  cp "fuel/core/config/config.php", "fuel/app/config/config.php"
+
 end
 
 #$ rm CHANGELOG.md CONTRIBUTING.md README.md TESTING.md .gitmodules
