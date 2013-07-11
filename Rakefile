@@ -2,9 +2,9 @@
 desc "FuelPHPで作るWEBアプリケーションのボイラープレート作成"
 task :default do
 
-  appname = ENV['appname']
-  sh "git clone --recursive git://github.com/fuel/fuel.git #{appname}"
-  cd appname
+  apppath = File.join(ENV['path'], ENV['appname'])
+  sh "git clone --recursive git://github.com/fuel/fuel.git #{apppath}"
+  cd apppath
 
   submodules = []
   pair = {}
