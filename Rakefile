@@ -2,9 +2,9 @@
 desc "FuelPHPで作るWEBアプリケーションのボイラープレート作成"
 task :default do
 
-  projectname = "sandbox" # TODO 引数でもらうようにする
-  sh "git clone --recursive git://github.com/fuel/fuel.git #{projectname}"
-  cd projectname
+  appname = ENV['appname']
+  sh "git clone --recursive git://github.com/fuel/fuel.git #{appname}"
+  cd appname
 
   submodules = []
   pair = {}

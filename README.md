@@ -2,5 +2,5 @@
 
 ```
 $ bundle --path vendor/bundle
-$ bundle exec rake
+$ bundle exec rake appname="myapp"
 ```
