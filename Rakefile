@@ -1,6 +1,11 @@
 # encoding: utf-8
 desc "FuelPHPで作るWEBアプリケーションのボイラープレート作成"
 task :default do
+  git_conf = {
+    'remote' => "https://git.codebreak.com/naoyes",
+    'name' => "naoyes",
+    'email' => "naoyes+codebreak@gmail.com",
+  }
 
   apppath = File.join(ENV['path'], ENV['appname'])
   sh "git clone --recursive git://github.com/fuel/fuel.git #{apppath}"
@@ -25,6 +30,8 @@ task :default do
   sh "sudo rm -R #{del_dirs.join(' ')}"
 
   sh "git init"
+  sh "git config user.name '#{git_conf['name']}'"
+  sh "git config user.email '#{git_conf['email']}'"
   submodules.each do |mod|
     sh "git submodule add #{mod[:url]} #{mod[:path]}"
   end
@@ -45,6 +52,9 @@ task :default do
   end
   mv buff_file, conf_file
 
+  git_remote = [git_conf['remote'], ENV['appname'] + '.git'].join('/')
   sh "git add ."
   sh "git commit -m 'Initial commit'"
+  sh "git remote add origin #{git_remote}"
+  sh "git push origin master"
 end
