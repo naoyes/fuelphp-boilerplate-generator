@@ -14,9 +14,9 @@ task :default do
   submodules = []
   pair = {}
   open('.gitmodules', 'r').each do |line|
-    if /path = (.*)$/.match(line) then
+    if /^\s+path = (.*)$/.match(line) then
       pair[:path] = $1
-    elsif /url = (.*)$/.match(line) then
+    elsif /^\s+url = (.*)$/.match(line) then
       pair[:url] = $1
       submodules.push(pair)
       pair = {}
@@ -26,7 +26,10 @@ task :default do
   del_files = ["CHANGELOG.md", "CONTRIBUTING.md", "README.md", "TESTING.md", ".gitmodules"]
   rm del_files
 
-  del_dirs = ['.git', 'docs/']
+  del_dirs = ['.git']
+  submodules.each do |mod|
+    del_dirs.push(mod[:path])
+  end
   sh "sudo rm -R #{del_dirs.join(' ')}"
 
   sh "git init"
