@@ -30,7 +30,8 @@ end
 
 desc "FuelPHPで作ったWEBアプリケーションのデプロイ"
 task :deploy do
-  remote_repo = "https://git.codebreak.com/naoyes/myapp.git"
+  remote_repo = ENV['repo']
+
   dir = ENV['path'].split('/')[-1]
   cd File.expand_path("..", ENV['path'])
   sh "git clone --recursive #{remote_repo} #{dir}"
