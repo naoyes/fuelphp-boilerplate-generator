@@ -27,3 +27,15 @@ task :default do
   sh "git remote add #{remote_name} #{git_remote}"
   sh "git push #{remote_name} #{branch}"
 end
+
+desc "FuelPHPで作ったWEBアプリケーションのデプロイ"
+task :deploy do
+  remote_repo = "https://git.codebreak.com/naoyes/myapp.git"
+  dir = ENV['path'].split('/')[-1]
+  cd File.expand_path("..", ENV['path'])
+  sh "git clone --recursive #{remote_repo} #{dir}"
+  cd dir
+  sh "php oil refine install"
+  sh "php composer.phar self-update"
+  sh "php composer.phar update"
+end
